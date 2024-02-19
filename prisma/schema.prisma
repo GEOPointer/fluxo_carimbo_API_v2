@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Usuario {
+  id String @id @default(uuid())
+  nome String
+  sobrenome String
+  assinatura_caminho String
+  email String @unique
+  senha String 
+  funcoes Funcao_Usuario[]
+  documentos_etapa Documento_Etapa[]
+  token Token?
+  created_at DateTime @default(now())
+}
+
+model Funcao{
+  id Int @id @default(autoincrement())
+  nome String
+  created_at DateTime @default(now())
+  usuarios Funcao_Usuario[]
+  etapas Funcao_Etapa[]
+}
+
+model Funcao_Usuario{
+  id Int @id @default(autoincrement())
+  usuario Usuario @relation(fields: [usuario_id], references: [id])
+  usuario_id String
+  funcao Funcao @relation(fields: [funcao_id], references: [id])
+  funcao_id Int
+  created_at DateTime @default(now())
+}
+
+model Funcao_Etapa{
+  id Int @id @default(autoincrement())
+  etapa Etapa @relation(fields: [etapa_id], references: [id])
+  etapa_id Int
+  funcao Funcao @relation(fields: [funcao_id], references: [id])
+  funcao_id Int
+  created_at DateTime @default(now())
+}
+
+model Fluxo {
+  id Int @id @default(autoincrement())
+  nome String
+  descricao String
+  documentos Documento[]
+  created_at DateTime @default(now())
+  etapas Etapa[]
+}
+
+model Etapa {
+  id Int @id @default(autoincrement())
+  nome String
+  fluxo Fluxo @relation(fields: [fluxo_id], references: [id])
+  fluxo_id Int
+  created_at DateTime @default(now())
+  documentos_etapa Documento_Etapa[]
+  funcoes Funcao_Etapa[]
+}
+
+model Documento{
+  id Int @id @default(autoincrement())
+  nome String
+  descricao String?
+  caminho String
+  nome_arquivo String
+  fluxo Fluxo @relation(fields: [fluxo_id], references: [id])
+  fluxo_id Int
+  documentos_etapa Documento_Etapa[]
+  status String
+  created_at DateTime @default(now())
+}
+
+model Documento_Etapa{
+  id Int @id @default(autoincrement())
+  etapa Etapa @relation(fields: [etapa_id], references: [id])
+  etapa_id Int
+  documento Documento @relation(fields: [documento_id], references: [id])
+  documento_id Int
+  usuario Usuario @relation(fields: [usuario_id], references: [id])
+  usuario_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Token {
+  id Int @id @default(autoincrement())
+  token String
+  usuario Usuario @relation(fields: [usuario_id], references: [id])
+  usuario_id  String @unique
+  created_at DateTime @default(now())
+  @@map("tokens")
+}

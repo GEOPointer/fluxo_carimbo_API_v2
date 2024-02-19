@@ -1,3 +1,11 @@
+#Armazenamento
+Storage/
+prisma/dev.db
+prisma/migrations
+prisma/dev.db-journal
+Scripts/Carimbados/
+Scripts/Carimbar Restante/
+
 # Logs
 logs
 *.log
